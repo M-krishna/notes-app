@@ -63,6 +63,9 @@
 </template>
 
 <script>
+import NOTES_ALL from '@/graphql/NotesAll.gql'
+import NOTES_CREATE from '@/graphql/NotesCreate.gql'
+
 export default {
   name: 'Notes',
   data: () => ({
@@ -70,38 +73,25 @@ export default {
     note: {
       title: '',
       content: ''
-    },
-    notes: [
-      {
-        title: 'Hey there',
-        content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
-      },
-      {
-        title: 'Hello there mate',
-        content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Tristique risus nec feugiat in fermentum posuere urna. Libero nunc consequat interdum varius. Justo eget magna fermentum iaculis eu non diam phasellus vestibulum. Urna duis convallis convallis tellus id interdum velit laoreet id. Maecenas volutpat blandit aliquam etiam erat velit. Sed tempus urna et pharetra pharetra massa massa. Auctor augue mauris augue neque gravida in fermentum. Accumsan sit amet nulla facilisi morbi tempus. Pharetra massa massa ultricies mi quis hendrerit dolor magna. Diam in arcu cursus euismod quis viverra nibh cras pulvinar. Mattis aliquam faucibus purus in. Et netus et malesuada fames ac turpis egestas sed tempus. Donec adipiscing tristique risus nec feugiat. Ut tristique et egestas quis ipsum suspendisse. Gravida rutrum quisque non tellus orci ac auctor. Diam maecenas sed enim ut sem viverra aliquet eget sit. Faucibus purus in massa tempor. Dolor sit amet consectetur adipiscing elit.'
-      },
-      {
-        title: 'Hello there mate',
-        content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Tristique risus nec feugiat in fermentum posuere urna. Libero nunc consequat interdum varius. Justo eget magna fermentum iaculis eu non diam phasellus vestibulum. Urna duis convallis convallis tellus id interdum velit laoreet id. Maecenas volutpat blandit aliquam etiam erat velit. Sed tempus urna et pharetra pharetra massa massa.'
-      },
-      {
-        title: 'Hello there mate',
-        content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-      },
-      {
-        title: 'Hello there mate',
-        content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Tristique risus nec feugiat in fermentum posuere urna. Libero nunc consequat interdum varius. Justo eget magna fermentum iaculis eu non diam phasellus vestibulum. Urna duis convallis convallis tellus id interdum velit laoreet id. Maecenas volutpat blandit aliquam etiam erat velit. Sed tempus urna et pharetra pharetra massa massa. Auctor augue mauris augue neque gravida in fermentum. Accumsan sit amet nulla facilisi morbi tempus. Pharetra massa massa ultricies mi quis hendrerit dolor magna. Diam in arcu cursus euismod quis viverra nibh cras pulvinar. Mattis aliquam faucibus purus in. Et netus et malesuada fames ac turpis egestas sed tempus. Donec adipiscing tristique risus nec feugiat. Ut tristique et egestas quis ipsum suspendisse. Gravida rutrum quisque non tellus orci ac auctor. Diam maecenas sed enim ut sem viverra aliquet eget sit. Faucibus purus in massa tempor. Dolor sit amet consectetur adipiscing elit.'
-      }
-    ]
+    }
   }),
+  apollo: {
+    notes: {
+      query: NOTES_ALL
+    }
+  },
   methods: {
-    handleClose () {
+    async handleClose () {
       if (this.note.title.length !== 0 || this.note.content.length !== 0) {
-        const data = {
-          title: this.note.title,
-          content: this.note.content
-        }
-        this.notes.unshift(data)
+        const result = await this.$apollo.mutate({
+          mutation: NOTES_CREATE,
+          variables: {
+            title: this.note.title,
+            content: this.note.content,
+            userName: 'krishna'
+          }
+        })
+        console.log(result)
         this.note.title = ''
         this.note.content = ''
       }
@@ -114,13 +104,6 @@ export default {
   computed: {
     placeholder () {
       return this.visible !== 'block' ? 'Take a note...' : 'Title'
-    }
-  },
-  watch: {
-    'note.content': function (val) {
-      if (val.length > 0) {
-        console.log(val)
-      }
     }
   }
 }

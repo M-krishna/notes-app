@@ -1,0 +1,7 @@
+mutation createNote($title: String!, $content: String!, $userName: String!) {
+    createNote(input: {title: $title, content: $content, userName: $userName}) {
+        id
+        title
+        content
+    }
+}

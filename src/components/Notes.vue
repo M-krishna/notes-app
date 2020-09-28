@@ -26,7 +26,7 @@
     </v-row>
 
     <div class="notes-list">
-      <div class="notes-card" v-for="(note, i) in notes" :key="i">
+      <div class="notes-card" v-for="(note) in notes" :key="note.id">
         <div class="notes notes-title" contenteditable="false" aria-multiline="true" role="textbox" dir="ltr">{{note.title}}</div>
         <div class="notes notes-content" contenteditable="false" aria-multiline="true" role="textbox" dir="ltr">
           {{note.content}}
@@ -47,10 +47,10 @@
 
               <v-list dense>
                 <v-list-item
-                  :key="i"
+                  :key="note.id"
                 >
                   <v-list-item-content>
-                    <v-list-item-title @click="deleteNote(i)">Delete Note</v-list-item-title>
+                    <v-list-item-title @click="deleteNote(note.id)">Delete Note</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
               </v-list>
@@ -65,6 +65,7 @@
 <script>
 import NOTES_ALL from '@/graphql/NotesAll.gql'
 import NOTES_CREATE from '@/graphql/NotesCreate.gql'
+import NOTES_DELETE from '@/graphql/NotesDelete.gql'
 
 export default {
   name: 'Notes',
@@ -102,8 +103,13 @@ export default {
       }
       this.visible = 'none'
     },
-    deleteNote (index) {
-      this.notes.splice(index, 1)
+    async deleteNote (noteID) {
+      const result = await this.$apollo.mutate({
+        mutation: NOTES_DELETE,
+        variables: {
+          noteID: noteID
+        }
+      })
     }
   },
   computed: {

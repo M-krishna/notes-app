@@ -89,6 +89,11 @@ export default {
             title: this.note.title,
             content: this.note.content,
             userName: 'krishna'
+          },
+          update: (store, { data: { createNote } }) => {
+            const data = store.readQuery({ query: NOTES_ALL })
+            data.notes.unshift(createNote)
+            store.writeQuery({ query: NOTES_ALL, data })
           }
         })
         console.log(result)

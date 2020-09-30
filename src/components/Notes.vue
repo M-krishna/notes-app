@@ -84,7 +84,7 @@ export default {
   methods: {
     async handleClose () {
       if (this.note.title.length !== 0 || this.note.content.length !== 0) {
-        const result = await this.$apollo.mutate({
+        await this.$apollo.mutate({
           mutation: NOTES_CREATE,
           variables: {
             title: this.note.title,
@@ -97,14 +97,13 @@ export default {
             store.writeQuery({ query: NOTES_ALL, data })
           }
         })
-        console.log(result)
         this.note.title = ''
         this.note.content = ''
       }
       this.visible = 'none'
     },
     async deleteNote (noteID) {
-      const result = await this.$apollo.mutate({
+      await this.$apollo.mutate({
         mutation: NOTES_DELETE,
         variables: {
           noteID: noteID

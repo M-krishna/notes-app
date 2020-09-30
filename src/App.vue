@@ -4,6 +4,7 @@
       app
       clipped-left
       color="amber"
+      v-if="$auth.isAuthenticated"
     >
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <span class="title ml-3 mr-5">Notes</span>
@@ -15,6 +16,57 @@
           prepend-inner-icon="search"
       ></v-text-field>
       <v-spacer></v-spacer>
+      <v-menu
+        bottom
+        min-width="200px"
+        rounded
+        offset-y
+      >
+        <template v-slot:activator="{ on }">
+          <v-btn
+            icon
+            x-large
+            v-on="on"
+          >
+            <v-avatar
+              color="brown"
+              size="48"
+            >
+              <img
+                :src="$auth.user.picture"
+                alt="John"
+              >
+            </v-avatar>
+          </v-btn>
+        </template>
+        <v-card>
+          <v-list-item-content class="justify-center">
+            <div class="mx-auto text-center">
+              <v-avatar
+                color="brown"
+              >
+                <img
+                  :src="$auth.user.picture"
+                  alt="John"
+                >
+              </v-avatar>
+              <h3>{{ $auth.user.name }}</h3>
+              <p class="caption mt-1">
+                {{ $auth.user.email}}
+              </p>
+              <v-divider class="my-3"></v-divider>
+              <v-btn
+                depressed
+                rounded
+                text
+                @click="logout"
+              >
+                Sign Out
+              </v-btn>
+            </div>
+          </v-list-item-content>
+        </v-card>
+      </v-menu>
     </v-app-bar>
 
     <v-navigation-drawer
@@ -22,6 +74,7 @@
       app
       clipped
       color="grey lighten-4"
+      v-if="$auth.isAuthenticated"
     >
       <v-list
         dense
@@ -93,7 +146,14 @@ export default {
       // { divider: true },
       // { icon: 'settings', text: 'Settings' }
     ]
-  })
+  }),
+  methods: {
+    logout () {
+      this.$auth.logout({
+        returnTo: window.location.origin
+      })
+    }
+  }
 }
 </script>
 
